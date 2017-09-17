@@ -1,38 +1,28 @@
-import React from 'react'
+import React, { Component } from 'react'
 
-import Base from './Base'
-import { getSDK } from '../utils'
+import createPlayer from '../createPlayer'
+import { callPlayer, getSDK } from '../utils'
 
 const SDK_URL = 'https://player.vimeo.com/api/player.js'
 const SDK_GLOBAL = 'Vimeo'
 const MATCH_URL = /https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/
 const BLANK_VIDEO_URL = 'https://vimeo.com/127250231'
 
-export default class Vimeo extends Base {
+class Vimeo extends Component {
   static displayName = 'Vimeo'
-  static canPlay (url) {
-    return MATCH_URL.test(url)
-  }
-  componentDidMount () {
-    const { url, config } = this.props
-    if (!url && config.vimeo.preload) {
-      this.preloading = true
-      this.load(BLANK_VIDEO_URL)
-    }
-    super.componentDidMount()
-  }
-  load (url) {
+  static canPlay = MATCH_URL
+  static shouldPreload = props => props.config.vimeo.preload
+  static preloadURL = BLANK_VIDEO_URL
+
+  callPlayer = callPlayer
+  duration = null
+  load (url, isReady) {
     const id = url.match(MATCH_URL)[3]
     this.duration = null
-    if (this.isReady) {
+    if (isReady) {
       this.player.loadVideo(id).catch(this.props.onError)
       return
     }
-    if (this.loadingSDK) {
-      this.loadOnReady = url
-      return
-    }
-    this.loadingSDK = true
     getSDK(SDK_URL, SDK_GLOBAL).then(Vimeo => {
       this.player = new Vimeo.Player(this.container, {
         ...this.props.config.vimeo.playerOptions,
@@ -44,10 +34,10 @@ export default class Vimeo extends Base {
         iframe.style.width = '100%'
         iframe.style.height = '100%'
       }).catch(this.props.onError)
-      this.player.on('loaded', this.onReady)
+      this.player.on('loaded', this.props.onReady)
       this.player.on('play', ({ duration }) => {
         this.duration = duration
-        this.onPlay()
+        this.props.onPlay()
       })
       this.player.on('pause', this.props.onPause)
       this.player.on('seeked', e => this.props.onSeek(e.seconds))
@@ -68,11 +58,10 @@ export default class Vimeo extends Base {
     this.callPlayer('pause')
   }
   stop () {
-    if (this.preloading) return
+    if (this.props.preloading) return
     this.callPlayer('unload')
   }
-  seekTo (amount) {
-    const seconds = super.seekTo(amount)
+  seekTo (seconds) {
     this.callPlayer('setCurrentTime', seconds)
   }
   setVolume (fraction) {
@@ -101,3 +90,5 @@ export default class Vimeo extends Base {
     return <div style={style} ref={this.ref} />
   }
 }
+
+export default createPlayer(Vimeo)
