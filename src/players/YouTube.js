@@ -16,8 +16,8 @@ export default class YouTube extends Component {
   static loopOnEnded = true
 
   callPlayer = callPlayer
-  load (url) {
-    const { isReady, playsinline, controls, config, onError } = this.props
+  load (url, isReady) {
+    const { playsinline, controls, config, onError } = this.props
     const id = url && url.match(MATCH_URL)[1]
     if (isReady) {
       this.player.cueVideoById({
