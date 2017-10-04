@@ -29,35 +29,34 @@ export default class Player extends Component {
     }
     this.mounted = false
   }
-  componentWillReceiveProps (nextProps) {
-    const { url, playing, volume, muted, playbackRate } = this.props
-    // Invoke player methods based on incoming props
-    if (url !== nextProps.url && nextProps.url) {
+  componentDidUpdate (prevProps) {
+    const { innerPlayer, url, playing, volume, muted, playbackRate } = this.props
+    // Invoke player methods based on updated props
+    if (prevProps.innerPlayer !== innerPlayer) {
+      this.isReady = false
+    }
+    if (prevProps.url !== url && url) {
       this.seekOnPlay = null
       this.startOnPlay = true
-      if (url && !this.isReady) {
-        this.loadOnReady = nextProps.url
-      } else {
-        this.player.load(nextProps.url, this.isReady)
-      }
+      this.player.load(url, this.isReady)
     }
-    if (url && !nextProps.url) {
+    if (prevProps.url && !url) {
       this.player.stop()
     }
-    if (!playing && nextProps.playing) {
+    if (!prevProps.playing && playing) {
       this.player.play()
     }
-    if (playing && !nextProps.playing) {
+    if (prevProps.playing && !playing) {
       this.player.pause()
     }
-    if (volume !== nextProps.volume && !nextProps.muted) {
-      this.player.setVolume(nextProps.volume)
+    if (prevProps.volume !== volume && !muted) {
+      this.player.setVolume(volume)
     }
-    if (muted !== nextProps.muted) {
-      this.player.setVolume(nextProps.muted ? 0 : nextProps.volume)
+    if (prevProps.muted !== muted) {
+      this.player.setVolume(muted ? 0 : volume)
     }
-    if (playbackRate !== nextProps.playbackRate && this.player.setPlaybackRate) {
-      this.player.setPlaybackRate(nextProps.playbackRate)
+    if (prevProps.playbackRate !== playbackRate && this.player.setPlaybackRate) {
+      this.player.setPlaybackRate(playbackRate)
     }
   }
   getCurrentTime () {
