@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import createPlayer from '../createPlayer'
 import { callPlayer, getSDK, parseStartTime } from '../utils'
 
 const SDK_URL = 'https://api.dmcdn.net/all.js'
@@ -9,9 +8,9 @@ const SDK_GLOBAL_READY = 'dmAsyncInit'
 const MATCH_URL = /^.+dailymotion.com\/(video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/
 const BLANK_VIDEO_URL = 'http://www.dailymotion.com/video/x522udb'
 
-class DailyMotion extends Component {
+export default class DailyMotion extends Component {
   static displayName = 'DailyMotion'
-  static canPlay = MATCH_URL
+  static canPlay = url => MATCH_URL.test(url)
   static shouldPreload = props => props.config.dailymotion.preload
   static preloadURL = BLANK_VIDEO_URL
   static loopOnEnded = true
@@ -102,5 +101,3 @@ class DailyMotion extends Component {
     )
   }
 }
-
-export default createPlayer(DailyMotion)

@@ -1,14 +1,13 @@
-import { FilePlayer } from './FilePlayer'
-import createPlayer from '../createPlayer'
+import FilePlayer from './FilePlayer'
 
 const RESOLVE_URL = 'https://api.vid.me/videoByUrl/'
 const MATCH_URL = /^https?:\/\/vid.me\/([a-z0-9]+)$/i
 
 const cache = {} // Cache song data requests
 
-class Vidme extends FilePlayer {
+export default class Vidme extends FilePlayer {
   static displayName = 'Vidme'
-  static canPlay = MATCH_URL
+  static canPlay = url => MATCH_URL.test(url)
 
   getData (url) {
     const { onError } = this.props
@@ -46,5 +45,3 @@ class Vidme extends FilePlayer {
     }, onError)
   }
 }
-
-export default createPlayer(Vidme)

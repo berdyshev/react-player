@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import createPlayer from '../createPlayer'
 import { callPlayer, getSDK, randomString } from '../utils'
 
 const SDK_URL = '//player.twitch.tv/js/embed/v1.js'
@@ -9,7 +8,7 @@ const MATCH_VIDEO_URL = /^(?:https?:\/\/)?(?:www\.)twitch\.tv\/videos\/(\d+)($|\
 const MATCH_CHANNEL_URL = /^(?:https?:\/\/)?(?:www\.)twitch\.tv\/([a-z0-9_]+)($|\?)/
 const PLAYER_ID_PREFIX = 'twitch-player-'
 
-class Twitch extends Component {
+export default class Twitch extends Component {
   static displayName = 'Twitch'
   static canPlay = url => MATCH_VIDEO_URL.test(url) || MATCH_CHANNEL_URL.test(url)
   static loopOnEnded = true
@@ -77,5 +76,3 @@ class Twitch extends Component {
     )
   }
 }
-
-export default createPlayer(Twitch)

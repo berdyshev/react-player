@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 
 import { propTypes, defaultProps, DEPRECATED_CONFIG_PROPS } from './props'
 import { getConfig, omit } from './utils'
+import Player from './Player'
+
 import YouTube from './players/YouTube'
 import SoundCloud from './players/SoundCloud'
 import Vimeo from './players/Vimeo'
@@ -108,10 +110,11 @@ export default class ReactPlayer extends Component {
     // Fall back to FilePlayer if nothing else can play the URL
     return this.renderPlayer(FilePlayer)
   }
-  renderPlayer = Player => {
+  renderPlayer = innerPlayer => {
     return (
       <Player
         {...this.props}
+        innerPlayer={innerPlayer}
         ref={this.activePlayerRef}
         key={Player.displayName}
         config={this.config}

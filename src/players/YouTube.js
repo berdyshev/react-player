@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import createPlayer from '../createPlayer'
 import { callPlayer, getSDK, parseStartTime } from '../utils'
 
 const SDK_URL = 'https://www.youtube.com/iframe_api'
@@ -9,9 +8,9 @@ const SDK_GLOBAL_READY = 'onYouTubeIframeAPIReady'
 const MATCH_URL = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/
 const BLANK_VIDEO_URL = 'https://www.youtube.com/watch?v=GlCmAC4MHek'
 
-class YouTube extends Component {
+export default class YouTube extends Component {
   static displayName = 'YouTube'
-  static canPlay = MATCH_URL
+  static canPlay = url => MATCH_URL.test(url)
   static shouldPreload = props => props.config.youtube.preload
   static preloadURL = BLANK_VIDEO_URL
   static loopOnEnded = true
@@ -101,5 +100,3 @@ class YouTube extends Component {
     )
   }
 }
-
-export default createPlayer(YouTube)
